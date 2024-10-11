@@ -1,109 +1,22 @@
-﻿using System.Reflection;
+﻿using QW32Lib;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 namespace WindowsAPITest
 {
-    internal partial class User32
-    {
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        internal extern static IntPtr RegisterClassExA(ref WNDCLASSEXW lpwcx);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        internal extern static IntPtr CreateWindowExW(
-            uint dwExStyle,
-            [MarshalAs(UnmanagedType.LPWStr)] string lpClassName,
-            [MarshalAs(UnmanagedType.LPWStr)] string lpWindowName,
-            uint dwStyle,
-            int X,
-            int Y,
-            int nWidth,
-            int nHeight,
-            IntPtr hWndParent,
-            IntPtr hMenu,
-            IntPtr hInstance,
-            IntPtr lpParam
-         );
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        internal extern static bool ShowWindow(IntPtr hWnd, int nCmdShow);
-    }
-
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    public struct WNDCLASSEXW
-    {
-        public uint cbSize;
-        public uint style;
-        [MarshalAs(UnmanagedType.FunctionPtr)] public IntPtr lpfnWndProc;
-        public int cbClsExtra;
-        public int cbWndExtra;
-        public IntPtr hInstance;
-        public IntPtr hIcon;
-        public IntPtr hCursor;
-        public IntPtr hbrBackground;
-        [MarshalAs(UnmanagedType.LPWStr)] public IntPtr lpszMenuName;
-        [MarshalAs(UnmanagedType.LPWStr)] public IntPtr lpszClassName;
-        public IntPtr hIconSm;
-    }
-
+    delegate IntPtr WndProcDel(IntPtr hwnd, uint uMsg, IntPtr wParam, IntPtr lParam);
 
     internal class Program
     {
-        delegate IntPtr WndProc(IntPtr hwnd, uint uMsg, IntPtr wParam, IntPtr lParam);
-
+        [SupportedOSPlatform(nameof(OSPlatform.Windows))]
         static void Main()
         {
-            try
-            {
-                WndProc WindwProc = Wndproc;
+            WindowClass wndClass = new();
 
-                WNDCLASSEXW wndClass = new()
-                {
-                    lpfnWndProc = Marshal.GetFunctionPointerForDelegate(WindwProc),
-                    hInstance = Marshal.GetHINSTANCE(Assembly.GetExecutingAssembly().GetModules()[0]),
-                    lpszClassName = Marshal.StringToHGlobalUni("QuidneysWindows"),
-                };
+            Window window = new($"Hello, World!", width: 960, height: 540, wndClass, centerToScreen: true);
+            window.Show();
 
-                User32.RegisterClassExA(ref wndClass);
-
-                IntPtr hWnd = User32.CreateWindowExW(
-                    0,
-                    "QuidneysWindows",
-                    "Quidneys Windows",
-                    0x00CF0000,
-                    0,
-                    0,
-                    800,
-                    600,
-                    IntPtr.Zero,
-                    IntPtr.Zero,
-                    wndClass.hInstance,
-                    IntPtr.Zero
-                );
-
-                if (hWnd == IntPtr.Zero)
-                {
-                    Console.WriteLine("Failed to create window.");
-                    Console.WriteLine(Marshal.GetLastWin32Error());
-                    return;
-                }
-
-                User32.ShowWindow(hWnd, 1);
-            }
-            catch
-            {
-                Console.WriteLine(Marshal.GetLastWin32Error());
-            }
-        }
-
-        static IntPtr Wndproc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam)
-        {
-            switch (uMsg)
-            {
-                case 0x0001:
-                    break;
-            }
-
-            return IntPtr.Zero;
+            Window.MessageLoop();
         }
     }
 }
