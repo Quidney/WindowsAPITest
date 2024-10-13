@@ -1,6 +1,7 @@
 ﻿using QW32Lib.DataTypes;
 using QW32Lib.DataTypes.Drawing;
 using QW32Lib.Enums;
+using QW32Lib.Helper;
 using System.Runtime.InteropServices;
 
 namespace QW32Lib
@@ -27,6 +28,20 @@ namespace QW32Lib
             IntPtr hInstance,
             IntPtr lpParam
          );
+        internal static IntPtr CreateWindowExW(WindowConfig config) => CreateWindowExW(
+            config.dwExStyle,
+            config.lpClassName,
+            config.lpWindowName,
+            config.dwStyle,
+            config.X,
+            config.Y,
+            config.nWidth,
+            config.nHeight,
+            config.hWndParent,
+            config.hMenu,
+            config.hInstance,
+            config.lpParam
+        );
 
         [LibraryImport(User32DLL, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]

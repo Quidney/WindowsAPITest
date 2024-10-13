@@ -1,5 +1,6 @@
 ﻿using QW32Lib.DataTypes;
 using QW32Lib.Enums;
+using QW32Lib.Helper;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
@@ -9,37 +10,75 @@ namespace QW32Lib
     {
         public static bool TryGetWindowFromHandle(IntPtr hWnd, [NotNullWhen(true)] out Window? instance) => handleInstancePairs.TryGetValue(hWnd, out instance);
 
-
         static Dictionary<IntPtr, Window> handleInstancePairs = [];
         static List<Window> OpenWindows = [];
 
         private IntPtr hWnd;
+        private WindowConfig Config;
 
-        private string Title;
-        private int StartPosX;
-        private int StartPosY;
-        private int Width;
-        private int Height;
-
-        WindowClass WndClass;
         private string ClassName => WindowClass.ClassName;
-        private IntPtr hInstance => WndClass.HInstance;
 
 
-        public Window(string windowName, int width, int height, WindowClass wndClass, bool centerToScreen = false)
+        /// <summary>
+        /// Calls the Constructor with WindowConfig
+        /// </summary>
+        /// <param name="hInstance"></param>
+        /// <param name="dwExStyle"></param>
+        /// <param name="lpClassName"></param>
+        /// <param name="lpWindowName"></param>
+        /// <param name="dwStyle"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="nWidth"></param>
+        /// <param name="nHeight"></param>
+        /// <param name="hWndParent"></param>
+        /// <param name="hMenu"></param>
+        /// <param name="lpParam"></param>
+        /// <param name="centerToScreen"></param>
+        public Window(
+            IntPtr hInstance,
+            uint dwExStyle = 0x00000000, 
+            string lpClassName = WindowClass.ClassName,
+            string lpWindowName = "QW32 Window",
+            uint dwStyle = (int)WindowStyle.WS_OVERLAPPEDWINDOW,
+            int x = 0,
+            int y = 0,
+            int nWidth = 960,
+            int nHeight = 540,
+            IntPtr hWndParent = default,
+            IntPtr hMenu = default,
+            IntPtr lpParam = default,
+            bool centerToScreen = false) 
+
+            : this(
+                new WindowConfig(
+                    _dwExStyle: dwExStyle, 
+                    _lpClassName: lpClassName, 
+                    _lpWindowName: lpWindowName, 
+                    _dwStyle: dwStyle, 
+                    _X: x, 
+                    _Y: y, 
+                    _nWidth: nWidth, 
+                    _nHeight: nHeight, 
+                    _hWndParent: hWndParent, 
+                    _hMenu: hMenu, 
+                    _hInstance: hInstance , 
+                    _lpParam: lpParam),
+                centerToScreen: centerToScreen)
         {
-            WndClass = wndClass;
-            Title = windowName;
-            Width = width;
-            Height = height;
+        }
+
+        public Window(WindowConfig config, bool centerToScreen = false)
+        {
+            Config = config;
 
             if (centerToScreen)
             {
                 int sWidth = User32.GetSystemMetrics(SystemMetrics.SM_CXSCREEN);
                 int sHeight = User32.GetSystemMetrics(SystemMetrics.SM_CYSCREEN);
 
-                StartPosX = (sWidth / 2) - (width / 2);
-                StartPosY = (sHeight / 2) - (height / 2);
+                Config.X = (sWidth / 2) - (Config.nWidth / 2);
+                Config.Y = (sHeight / 2) - (Config.nHeight / 2);
             }
 
             Create();
@@ -51,18 +90,18 @@ namespace QW32Lib
         public IntPtr Create()
         {
             hWnd = User32.CreateWindowExW(
-                dwExStyle: 0x00000000,
-                    lpClassName: ClassName,
-                    lpWindowName: Title,
-                    dwStyle: (int)WindowStyle.WS_OVERLAPPEDWINDOW,
-                    X: StartPosX,
-                    Y: StartPosY,
-                    nWidth: Width,
-                    nHeight: Height,
-                    hWndParent: IntPtr.Zero,
-                    hMenu: IntPtr.Zero,
-                    hInstance: hInstance,
-                    lpParam: IntPtr.Zero
+                dwExStyle: Config.dwExStyle,
+                lpClassName: Config.lpClassName,
+                lpWindowName: Config.lpWindowName,
+                dwStyle: Config.dwStyle,
+                X: Config.X,
+                Y: Config.Y,
+                nWidth: Config.nWidth,
+                nHeight: Config.nHeight,
+                hWndParent: Config.hWndParent,
+                hMenu: Config.hMenu,
+                hInstance: Config.hInstance,
+                lpParam: Config.lpParam
                 );
 
             if (hWnd == IntPtr.Zero)

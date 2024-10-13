@@ -11,14 +11,13 @@ namespace QW32Lib
         public const string ClassName = "QW32WindowClass";
 
         public IntPtr HInstance => hInstance;
-        IntPtr hInstance;
+        private IntPtr hInstance;
 
         public IntPtr LpfnWndProc => lpfnWndProc;
-        IntPtr lpfnWndProc;
+        private IntPtr lpfnWndProc;
 
-        WndProcDelegate dWndProc;
-
-        WNDCLASSEXW WNDCLASSEXW;
+        private WndProcDelegate dWndProc;
+        private WNDCLASSEXW WNDCLASSEXW;
 
         public WindowClass()
         {
@@ -52,9 +51,9 @@ namespace QW32Lib
             return IntPtr.Zero;
         }
 
-        private WNDCLASSEXW Create()
+        private unsafe WNDCLASSEXW Create()
         {
-            WNDCLASSEXW.cbSize = (uint)Marshal.SizeOf(WNDCLASSEXW);
+            WNDCLASSEXW.cbSize = (uint)sizeof(WNDCLASSEXW);
             WNDCLASSEXW.style = 0x00000000;
             WNDCLASSEXW.lpfnWndProc = lpfnWndProc;
             WNDCLASSEXW.cbClsExtra = 0;
