@@ -13,7 +13,7 @@ namespace WindowsAPITest
         {
             WindowClass wndClass = new();
 
-            Window window = new($"Hello, World!", width: 960, height: 540, wndClass, centerToScreen: true);
+            Window window = new(wndClass.HInstance, centerToScreen: true);
             window.Show();
 
             Window.MessageLoop();
