@@ -1,4 +1,5 @@
-﻿using QW32Lib.DataTypes.Helper;
+﻿using QW32Lib.DataTypes.Delegates;
+using QW32Lib.DataTypes.Helper;
 using QW32Lib.Enums;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -7,6 +8,13 @@ namespace QW32Lib
 {
     public class Window
     {
+        public event Action? Shown;
+
+        public event PaintEventDel? Paint;
+
+        public event Action? Destroying;
+        public event Action? Destroyed;
+
         public static bool TryGetWindowFromHandle(IntPtr hWnd, [NotNullWhen(true)] out Window? instance) => handleInstancePairs.TryGetValue(hWnd, out instance);
         private static Dictionary<IntPtr, Window> handleInstancePairs = [];
 
@@ -79,14 +87,14 @@ namespace QW32Lib
                 Config.Y = (sHeight / 2) - (Config.nHeight / 2);
             }
 
-            Create();
+            hWnd = CreateWindow();
 
             handleInstancePairs.Add(hWnd, this);
         }
 
-        private IntPtr Create()
+        private IntPtr CreateWindow()
         {
-            hWnd = User32.CreateWindowExW(
+            IntPtr hWnd = User32.CreateWindowExW(
                 dwExStyle: Config.dwExStyle,
                 lpClassName: Config.lpClassName,
                 lpWindowName: Config.lpWindowName,
@@ -99,7 +107,7 @@ namespace QW32Lib
                 hMenu: Config.hMenu,
                 hInstance: Config.hInstance,
                 lpParam: Config.lpParam
-                );
+            );
 
             if (hWnd == IntPtr.Zero)
             {
@@ -110,15 +118,16 @@ namespace QW32Lib
             return hWnd;
         }
 
-        public bool Show()
-        {
-            return User32.ShowWindow(hWnd, 1);
-        }
+        public bool Show() => User32.ShowWindow(hWnd, 1);
 
         public void Destroy()
         {
+            Destroying?.Invoke();
+
             handleInstancePairs.Remove(hWnd);
             User32.DestroyWindow(hWnd);
+
+            Destroyed?.Invoke();
 
             if (handleInstancePairs.Count == 0)
             {
