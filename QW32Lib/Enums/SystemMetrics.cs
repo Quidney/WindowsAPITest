@@ -1,6 +1,6 @@
 ﻿namespace QW32Lib.Enums
 {
-    public enum SystemMetrics
+    internal enum SystemMetrics
     {
         SM_ARRANGE = 56,
         SM_CLEANBOOT = 67,

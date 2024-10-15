@@ -1,6 +1,6 @@
 ﻿namespace QW32Lib.Enums
 {
-    public enum Cursor
+    internal enum Cursor
     {
         IDC_ARROW = 32512,
 

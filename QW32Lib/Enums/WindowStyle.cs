@@ -1,6 +1,6 @@
 ﻿namespace QW32Lib.Enums
 {
-    public enum WindowStyle
+    internal enum WindowStyle
     {
         WS_BORDER = 0x00800000,
         WS_CAPTION = 0x00C00000,
