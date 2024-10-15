@@ -1,7 +1,7 @@
-﻿namespace QW32Lib.Helper
+﻿namespace QW32Lib.DataTypes.Helper
 {
     public struct WindowConfig(
-        uint _dwExStyle, 
+        uint _dwExStyle,
         string _lpClassName,
         string _lpWindowName,
         uint _dwStyle,
@@ -9,10 +9,10 @@
         int _Y,
         int _nWidth,
         int _nHeight,
-        IntPtr _hWndParent,
-        IntPtr _hMenu,
-        IntPtr _hInstance,
-        IntPtr _lpParam
+        nint _hWndParent,
+        nint _hMenu,
+        nint _hInstance,
+        nint _lpParam
         )
     {
         public uint dwExStyle = _dwExStyle;
@@ -23,9 +23,9 @@
         public int Y = _Y;
         public int nWidth = _nWidth;
         public int nHeight = _nHeight;
-        public IntPtr hWndParent = _hWndParent;
-        public IntPtr hMenu = _hMenu;
-        public IntPtr hInstance = _hInstance;
-        public IntPtr lpParam = _lpParam;
+        public nint hWndParent = _hWndParent;
+        public nint hMenu = _hMenu;
+        public nint hInstance = _hInstance;
+        public nint lpParam = _lpParam;
     }
 }
