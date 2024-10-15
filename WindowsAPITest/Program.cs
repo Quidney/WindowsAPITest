@@ -4,8 +4,6 @@ using System.Runtime.Versioning;
 
 namespace WindowsAPITest
 {
-    delegate IntPtr WndProcDel(IntPtr hwnd, uint uMsg, IntPtr wParam, IntPtr lParam);
-
     internal class Program
     {
         [SupportedOSPlatform(nameof(OSPlatform.Windows))]
