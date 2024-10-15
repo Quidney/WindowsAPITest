@@ -11,12 +11,10 @@ namespace WindowsAPITest
         [SupportedOSPlatform(nameof(OSPlatform.Windows))]
         static void Main()
         {
-            WindowClass wndClass = new();
-
-            Window window = new(wndClass.HInstance, centerToScreen: true);
+            Window window = new();
             window.Show();
 
-            Window.MessageLoop();
+            Application.Run();
         }
     }
 }
