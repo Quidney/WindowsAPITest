@@ -1,6 +1,6 @@
 ﻿namespace QW32Lib.Enums
 {
-    public static class WindowNotifications
+    internal static class WindowNotification
     {
         public const uint WM_ACTIVATEAPP = 0x001C;              // 0x001C
         public const uint WM_CANCELMODE = 0x001F;               // 0x001F
