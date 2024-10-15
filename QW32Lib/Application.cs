@@ -1,4 +1,4 @@
-﻿using QW32Lib.DataTypes;
+﻿using QW32Lib.DataTypes.Helper;
 
 namespace QW32Lib
 {

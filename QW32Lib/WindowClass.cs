@@ -1,5 +1,5 @@
-﻿using QW32Lib.DataTypes;
-using QW32Lib.DataTypes.Delegates;
+﻿using QW32Lib.DataTypes.Delegates;
+using QW32Lib.DataTypes.Helper;
 using QW32Lib.Enums;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -16,7 +16,7 @@ namespace QW32Lib
         public static WindowClass GetInstance(IntPtr hInstance)
         {
             if (!handleWndClassDictionary.TryGetValue(hInstance, out WindowClass? wndClass))
-                throw new KeyNotFoundException("Given handle does not correspond to a WndClass instance.");
+                throw new KeyNotFoundException($"Given handle does not correspond to a {nameof(WindowClass)} instance.");
 
             return wndClass;
         }
@@ -46,7 +46,7 @@ namespace QW32Lib
             handleWndClassDictionary.Add(HInstance, this);
         }
 
-        private IntPtr WndProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam)
+        protected virtual IntPtr WndProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam)
         {
             switch (uMsg)
             {
@@ -84,9 +84,6 @@ namespace QW32Lib
 
             return WNDCLASSEXW;
         }
-        private IntPtr RegisterClass()
-        {
-            return User32.RegisterClassExW(WNDCLASSEXW);
-        }
+        private IntPtr RegisterClass() => User32.RegisterClassExW(WNDCLASSEXW);
     }
 }

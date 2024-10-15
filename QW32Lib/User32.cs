@@ -1,7 +1,6 @@
-﻿using QW32Lib.DataTypes;
-using QW32Lib.DataTypes.Drawing;
+﻿using QW32Lib.DataTypes.Drawing;
+using QW32Lib.DataTypes.Helper;
 using QW32Lib.Enums;
-using QW32Lib.Helper;
 using System.Runtime.InteropServices;
 
 namespace QW32Lib

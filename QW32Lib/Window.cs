@@ -1,5 +1,5 @@
-﻿using QW32Lib.Enums;
-using QW32Lib.Helper;
+﻿using QW32Lib.DataTypes.Helper;
+using QW32Lib.Enums;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
