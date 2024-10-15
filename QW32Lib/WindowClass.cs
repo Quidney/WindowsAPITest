@@ -1,4 +1,5 @@
 ﻿using QW32Lib.DataTypes.Delegates;
+using QW32Lib.DataTypes.Drawing;
 using QW32Lib.DataTypes.Helper;
 using QW32Lib.Enums;
 using System.Reflection;
@@ -10,8 +11,8 @@ namespace QW32Lib
     {
         private const string DefaultClassName = "QW32WindowClass";
 
-        public static WindowClass Default => @default.Value;
-        private static Lazy<WindowClass> @default = new(() => new WindowClass(className: DefaultClassName));
+        public static WindowClass Default => defaultInstance.Value;
+        private static readonly Lazy<WindowClass> defaultInstance = new(() => new WindowClass(className: DefaultClassName));
 
         public static WindowClass GetInstance(IntPtr hInstance)
         {
@@ -40,7 +41,7 @@ namespace QW32Lib
             lpfnWndProc = Marshal.GetFunctionPointerForDelegate(dWndProc);
             HInstance = Marshal.GetHINSTANCE(Assembly.GetExecutingAssembly().GetModules()[0]);
 
-            Create();
+            WNDCLASSEXW = CreateWNDCLASSEXW();
             RegisterClass();
 
             handleWndClassDictionary.Add(HInstance, this);
@@ -60,6 +61,13 @@ namespace QW32Lib
                     }
                     break;
 
+                case WindowNotification.WM_PAINT:
+                    {
+                        IntPtr hdc = User32.BeginPaint(hWnd, out PAINTSTRUCT ps);
+
+                        User32.EndPaint(hwnd, ps);
+                    }
+
                 default:
                     return User32.DefWindowProcW(hWnd, uMsg, wParam, lParam);
             }
@@ -67,23 +75,22 @@ namespace QW32Lib
             return IntPtr.Zero;
         }
 
-        private unsafe WNDCLASSEXW Create()
+        private unsafe WNDCLASSEXW CreateWNDCLASSEXW() => new()
         {
-            WNDCLASSEXW.cbSize = (uint)sizeof(WNDCLASSEXW);
-            WNDCLASSEXW.style = 0x00000000;
-            WNDCLASSEXW.lpfnWndProc = lpfnWndProc;
-            WNDCLASSEXW.cbClsExtra = 0;
-            WNDCLASSEXW.cbWndExtra = 0;
-            WNDCLASSEXW.hInstance = HInstance;
-            WNDCLASSEXW.hIcon = IntPtr.Zero;
-            WNDCLASSEXW.hCursor = User32.LoadCursorW(hInstance: IntPtr.Zero, lpCursorName: (IntPtr)Cursor.IDC_ARROW);
-            WNDCLASSEXW.hbrBackground = IntPtr.Zero;
-            WNDCLASSEXW.lpszMenuName = IntPtr.Zero;
-            WNDCLASSEXW.lpszClassName = Marshal.StringToHGlobalUni(ClassName);
-            WNDCLASSEXW.hIconSm = IntPtr.Zero;
+            cbSize = (uint)sizeof(WNDCLASSEXW),
+            style = 0x00000000,
+            lpfnWndProc = lpfnWndProc,
+            cbClsExtra = 0,
+            cbWndExtra = 0,
+            hInstance = HInstance,
+            hIcon = IntPtr.Zero,
+            hCursor = User32.LoadCursorW(hInstance: IntPtr.Zero, lpCursorName: (IntPtr)Cursor.IDC_ARROW),
+            hbrBackground = IntPtr.Zero,
+            lpszMenuName = IntPtr.Zero,
+            lpszClassName = Marshal.StringToHGlobalUni(ClassName),
+            hIconSm = IntPtr.Zero
+        };
 
-            return WNDCLASSEXW;
-        }
         private IntPtr RegisterClass() => User32.RegisterClassExW(WNDCLASSEXW);
     }
 }
