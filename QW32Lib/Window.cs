@@ -1,5 +1,4 @@
-﻿using QW32Lib.DataTypes;
-using QW32Lib.Enums;
+﻿using QW32Lib.Enums;
 using QW32Lib.Helper;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -9,9 +8,7 @@ namespace QW32Lib
     public class Window
     {
         public static bool TryGetWindowFromHandle(IntPtr hWnd, [NotNullWhen(true)] out Window? instance) => handleInstancePairs.TryGetValue(hWnd, out instance);
-
-        static Dictionary<IntPtr, Window> handleInstancePairs = [];
-        static List<Window> OpenWindows = [];
+        private static Dictionary<IntPtr, Window> handleInstancePairs = [];
 
         private IntPtr hWnd;
         private WindowConfig Config;
@@ -37,7 +34,7 @@ namespace QW32Lib
         /// <param name="centerToScreen"></param>
         public Window(
             IntPtr hInstance,
-            uint dwExStyle = 0x00000000, 
+            uint dwExStyle = 0x00000000,
             string lpClassName = WindowClass.ClassName,
             string lpWindowName = "QW32 Window",
             uint dwStyle = (int)WindowStyle.WS_OVERLAPPEDWINDOW,
@@ -48,21 +45,21 @@ namespace QW32Lib
             IntPtr hWndParent = default,
             IntPtr hMenu = default,
             IntPtr lpParam = default,
-            bool centerToScreen = false) 
+            bool centerToScreen = false)
 
             : this(
                 new WindowConfig(
-                    _dwExStyle: dwExStyle, 
-                    _lpClassName: lpClassName, 
-                    _lpWindowName: lpWindowName, 
-                    _dwStyle: dwStyle, 
-                    _X: x, 
-                    _Y: y, 
-                    _nWidth: nWidth, 
-                    _nHeight: nHeight, 
-                    _hWndParent: hWndParent, 
-                    _hMenu: hMenu, 
-                    _hInstance: hInstance , 
+                    _dwExStyle: dwExStyle,
+                    _lpClassName: lpClassName,
+                    _lpWindowName: lpWindowName,
+                    _dwStyle: dwStyle,
+                    _X: x,
+                    _Y: y,
+                    _nWidth: nWidth,
+                    _nHeight: nHeight,
+                    _hWndParent: hWndParent,
+                    _hMenu: hMenu,
+                    _hInstance: hInstance,
                     _lpParam: lpParam),
                 centerToScreen: centerToScreen)
         {
@@ -83,11 +80,10 @@ namespace QW32Lib
 
             Create();
 
-            OpenWindows.Add(this);
             handleInstancePairs.Add(hWnd, this);
         }
 
-        public IntPtr Create()
+        private IntPtr Create()
         {
             hWnd = User32.CreateWindowExW(
                 dwExStyle: Config.dwExStyle,
@@ -118,23 +114,12 @@ namespace QW32Lib
             return User32.ShowWindow(hWnd, 1);
         }
 
-        public static void MessageLoop()
-        {
-            while (User32.GetMessageW(out MSG msg, IntPtr.Zero, 0, 0))
-            {
-                User32.TranslateMessage(ref msg);
-                User32.DispatchMessageW(ref msg);
-            }
-        }
-
         public void Destroy()
         {
-            OpenWindows.Remove(this);
             handleInstancePairs.Remove(hWnd);
-
             User32.DestroyWindow(hWnd);
 
-            if (OpenWindows.Count == 0)
+            if (handleInstancePairs.Count == 0)
             {
                 User32.PostQuitMessage(0);
             }

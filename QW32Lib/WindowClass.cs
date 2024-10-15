@@ -34,10 +34,10 @@ namespace QW32Lib
         {
             switch (uMsg)
             {
-                case WindowNotifications.WM_CREATE:
+                case WindowNotification.WM_CREATE:
                     break;
 
-                case WindowNotifications.WM_DESTROY:
+                case WindowNotification.WM_DESTROY:
                     if (Window.TryGetWindowFromHandle(hWnd, out Window? window))
                     {
                         window.Destroy();
