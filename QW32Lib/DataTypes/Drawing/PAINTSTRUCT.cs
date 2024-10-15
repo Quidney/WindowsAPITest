@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace QW32Lib.DataTypes.Drawing
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct PAINTSTRUCT
+    internal struct PAINTSTRUCT
     {
         public IntPtr hdc;
         [MarshalAs(UnmanagedType.Bool)] public bool fErase;

@@ -3,7 +3,7 @@
 namespace QW32Lib.DataTypes
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct POINT
+    internal struct POINT
     {
         public int x;
         public int y;

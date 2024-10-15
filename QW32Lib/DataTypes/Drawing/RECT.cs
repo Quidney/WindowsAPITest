@@ -3,7 +3,7 @@
 namespace QW32Lib.DataTypes.Drawing
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct RECT
+    internal struct RECT
     {
         public int left;
         public int top;

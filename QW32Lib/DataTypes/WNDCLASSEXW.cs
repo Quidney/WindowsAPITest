@@ -3,7 +3,7 @@
 namespace QW32Lib.DataTypes
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    public struct WNDCLASSEXW
+    internal struct WNDCLASSEXW
     {
         public uint cbSize;
         public uint style;

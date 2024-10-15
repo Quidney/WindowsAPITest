@@ -3,7 +3,7 @@
 namespace QW32Lib.DataTypes
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct MSG
+    internal struct MSG
     {
         public nint hwnd;
         public uint message;
