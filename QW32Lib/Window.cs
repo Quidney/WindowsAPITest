@@ -13,8 +13,10 @@ namespace QW32Lib
         private IntPtr hWnd;
         private WindowConfig Config;
 
-        private string ClassName => WindowClass.ClassName;
 
+        public Window(bool centerToScreen = true) : this(WindowClass.Default.HInstance, centerToScreen: centerToScreen)
+        {
+        }
 
         /// <summary>
         /// Calls the Constructor with WindowConfig
@@ -35,7 +37,6 @@ namespace QW32Lib
         public Window(
             IntPtr hInstance,
             uint dwExStyle = 0x00000000,
-            string lpClassName = WindowClass.ClassName,
             string lpWindowName = "QW32 Window",
             uint dwStyle = (int)WindowStyle.WS_OVERLAPPEDWINDOW,
             int x = 0,
@@ -50,7 +51,7 @@ namespace QW32Lib
             : this(
                 new WindowConfig(
                     _dwExStyle: dwExStyle,
-                    _lpClassName: lpClassName,
+                    _lpClassName: WindowClass.GetInstance(hInstance).ClassName,
                     _lpWindowName: lpWindowName,
                     _dwStyle: dwStyle,
                     _X: x,
