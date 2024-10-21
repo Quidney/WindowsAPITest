@@ -80,5 +80,9 @@ namespace QW32Lib
 
         [LibraryImport(User32DLL, SetLastError = true)]
         internal static partial IntPtr BeginPaint(IntPtr hWnd, out PAINTSTRUCT lpPaint);
+
+        [LibraryImport(User32DLL, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static partial bool EndPaint(IntPtr hWnd, ref PAINTSTRUCT lpPaint);
     }
 }
