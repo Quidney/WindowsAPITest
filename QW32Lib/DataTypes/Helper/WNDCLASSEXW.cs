@@ -7,15 +7,15 @@ namespace QW32Lib.DataTypes.Helper
     {
         public uint cbSize;
         public uint style;
-        public nint lpfnWndProc;
+        public IntPtr lpfnWndProc;
         public int cbClsExtra;
         public int cbWndExtra;
-        public nint hInstance;
-        public nint hIcon;
-        public nint hCursor;
-        public nint hbrBackground;
-        public nint lpszMenuName;
-        public nint lpszClassName;
-        public nint hIconSm;
+        public IntPtr hInstance;
+        public IntPtr hIcon;
+        public IntPtr hCursor;
+        public IntPtr hbrBackground;
+        public IntPtr lpszMenuName;
+        public IntPtr lpszClassName;
+        public IntPtr hIconSm;
     }
 }
