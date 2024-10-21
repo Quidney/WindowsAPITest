@@ -1,7 +1,9 @@
 ﻿using QW32Lib.DataTypes.Delegates;
+using QW32Lib.DataTypes.Drawing;
 using QW32Lib.DataTypes.Helper;
 using QW32Lib.Enums;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace QW32Lib
@@ -9,9 +11,7 @@ namespace QW32Lib
     public class Window
     {
         public event Action? Shown;
-
         public event PaintEventDel? Paint;
-
         public event Action? Destroying;
         public event Action? Destroyed;
 
@@ -88,8 +88,43 @@ namespace QW32Lib
             }
 
             hWnd = CreateWindow();
-
             handleInstancePairs.Add(hWnd, this);
+        }
+
+        public static IntPtr WndProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam)
+        {
+            if (TryGetWindowFromHandle(hWnd, out Window? instance))
+            {
+                return instance.InstanceWndProc(hWnd, uMsg, wParam, lParam);
+            }
+
+            return User32.DefWindowProcW(hWnd, uMsg, wParam, lParam);
+        }
+
+        protected virtual IntPtr InstanceWndProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam)
+        {
+            switch (uMsg)
+            {
+                case (uint)WindowNotification.WM_CREATE:
+                    return IntPtr.Zero;
+
+                case (uint)WindowNotification.WM_PAINT:
+                    PAINTSTRUCT ps;
+                    User32.BeginPaint(hWnd, out ps);
+                    Paint?.Invoke(hWnd, ps.hdc);
+                    User32.EndPaint(hWnd, ref ps);
+                    return IntPtr.Zero;
+
+                case (uint)WindowNotification.WM_DESTROY:
+                    if (TryGetWindowFromHandle(hWnd, out Window? wnd))
+                    {
+                        wnd.Destroy();
+                    }
+                    return IntPtr.Zero;
+
+                default:
+                    return User32.DefWindowProcW(hWnd, uMsg, wParam, lParam);
+            }
         }
 
         private IntPtr CreateWindow()
